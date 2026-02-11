@@ -71,6 +71,11 @@ input {
   font-family: inherit;
 }
 
+/* Hide IronCalc's built-in toolbar */
+div:has(> button[title="Undo"]) {
+  display: none !important;
+}
+
 /* Utility classes */
 .sr-only {
   position: absolute;

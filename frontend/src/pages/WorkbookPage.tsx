@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { useParams, useNavigate, useBlocker } from "react-router-dom";
 import {
   getSpreadsheet,
@@ -18,7 +18,13 @@ import {
   Circle,
   RotateCcw,
 } from "lucide-react";
+import MenuBar from "../components/MenuBar";
+import FormatToolbar from "../components/FormatToolbar";
 import styles from "./WorkbookPage.module.css";
+
+/** Memoised wrapper so IronCalc only re-renders when model/refreshId change,
+ *  not on every parent state update (e.g. typing in the title input). */
+const MemoizedIronCalc = memo(IronCalc);
 
 export default function WorkbookPage() {
   const { id } = useParams<{ id: string }>();
@@ -193,7 +199,9 @@ export default function WorkbookPage() {
   }, [saveStatus, saveNow, navigate]);
 
   // ── Title editing ──────────────────────────
-  async function handleTitleSubmit() {
+  const titleAreaRef = useRef<HTMLDivElement>(null);
+
+  async function commitTitle() {
     setEditingTitle(false);
     if (!spreadsheetId || !title.trim() || title === spreadsheet?.title) {
       setTitle(spreadsheet?.title || "Untitled spreadsheet");
@@ -209,6 +217,28 @@ export default function WorkbookPage() {
       setTitle(spreadsheet?.title || "Untitled spreadsheet");
     }
   }
+
+  // Close title editing on click outside the title area
+  useEffect(() => {
+    if (!editingTitle) return;
+    function handlePointerDown(e: PointerEvent) {
+      if (
+        titleAreaRef.current &&
+        !titleAreaRef.current.contains(e.target as Node)
+      ) {
+        commitTitle();
+      }
+    }
+    document.addEventListener("pointerdown", handlePointerDown, true);
+    return () =>
+      document.removeEventListener("pointerdown", handlePointerDown, true);
+  });
+
+  // ── Refresh after toolbar action ───────────
+  const handleToolbarRefresh = useCallback(() => {
+    setRefreshId((prev) => prev + 1);
+    markDirty();
+  }, [markDirty]);
 
   // ── Render: loading state ──────────────────
   if (loading) {
@@ -248,7 +278,7 @@ export default function WorkbookPage() {
           <div className={styles.logoMark}>
             <Grid3X3 size={16} strokeWidth={2.5} />
           </div>
-          <div className={styles.titleArea}>
+          <div className={styles.titleArea} ref={titleAreaRef}>
             {editingTitle ? (
               <input
                 ref={titleInputRef}
@@ -256,9 +286,8 @@ export default function WorkbookPage() {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                onBlur={handleTitleSubmit}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") handleTitleSubmit();
+                  if (e.key === "Enter") commitTitle();
                   if (e.key === "Escape") {
                     setTitle(spreadsheet?.title || "");
                     setEditingTitle(false);
@@ -272,7 +301,10 @@ export default function WorkbookPage() {
                 className={styles.titleButton}
                 onClick={() => {
                   setEditingTitle(true);
-                  setTimeout(() => titleInputRef.current?.select(), 0);
+                  setTimeout(() => {
+                    titleInputRef.current?.focus();
+                    titleInputRef.current?.select();
+                  }, 0);
                 }}
               >
                 {title}
@@ -338,9 +370,28 @@ export default function WorkbookPage() {
         </div>
       </header>
 
+      {/* Menu bar (File, Edit, View, Insert, Format, Data) */}
+      {model && (
+        <MenuBar
+          model={model}
+          title={title}
+          onSave={saveNow}
+          onRefresh={handleToolbarRefresh}
+        />
+      )}
+
+      {/* Format toolbar (bold, italic, fonts, colors, alignment, etc.) */}
+      {model && (
+        <FormatToolbar model={model} onRefresh={handleToolbarRefresh} />
+      )}
+
       {/* Spreadsheet */}
-      <div className={styles.workbookContainer} ref={workbookContainerRef}>
-        {model && <IronCalc model={model} refreshId={refreshId} />}
+      <div
+        className={styles.workbookContainer}
+        ref={workbookContainerRef}
+        inert={editingTitle || undefined}
+      >
+        {model && <MemoizedIronCalc model={model} refreshId={refreshId} />}
       </div>
     </div>
   );
