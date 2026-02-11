@@ -117,7 +117,7 @@ export default function WorkbookPage() {
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, setInitialSnapshot]);
 
   // ── Detect model mutations via DOM observation ─
   //

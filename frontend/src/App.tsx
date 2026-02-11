@@ -1,17 +1,10 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom'
-import { isAuthenticated } from './lib/api'
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
+import ProtectedRoute from './components/ProtectedRoute'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import WorkbookPage from './pages/WorkbookPage'
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  if (!isAuthenticated()) {
-    return <Navigate to="/login" replace />
-  }
-  return <>{children}</>
-}
-
-export const router = createBrowserRouter([
+const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />,
@@ -37,3 +30,7 @@ export const router = createBrowserRouter([
     element: <Navigate to="/" replace />,
   },
 ])
+
+export default function App() {
+  return <RouterProvider router={router} />
+}
