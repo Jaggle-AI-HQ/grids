@@ -1,0 +1,11 @@
+.git
+*.db
+*.db-journal
+frontend/node_modules
+frontend/dist
+jaggle-grids
+.idea
+.vscode
+.DS_Store
+*.swp
+*.swo

@@ -1,0 +1,20 @@
+services:
+  grids:
+    build: .
+    container_name: jaggle-grids
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    ports:
+      - "${PORT:-8080}:8080"
+    volumes:
+      - grids-data:/app/data
+    environment:
+      - GIN_MODE=${GIN_MODE:-release}
+      - PORT=${PORT:-8080}
+      - DB_PATH=${DB_PATH:-/app/data/jaggle_grids.db}
+      - CORS_ORIGIN=${CORS_ORIGIN:-*}
+
+volumes:
+  grids-data:

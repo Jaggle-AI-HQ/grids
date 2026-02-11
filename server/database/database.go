@@ -3,6 +3,7 @@ package database
 import (
 	"jaggle-grids/server/models"
 	"log"
+	"os"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -12,8 +13,13 @@ import (
 var DB *gorm.DB
 
 func Init() {
+	dbPath := os.Getenv("DB_PATH")
+	if dbPath == "" {
+		dbPath = "jaggle_grids.db"
+	}
+
 	var err error
-	DB, err = gorm.Open(sqlite.Open("jaggle_grids.db"), &gorm.Config{
+	DB, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Warn),
 	})
 	if err != nil {

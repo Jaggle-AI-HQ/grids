@@ -7,6 +7,10 @@ jaggle_grids.db
 frontend/node_modules/
 frontend/dist/
 
+# Environment
+.env
+!.env.example
+
 # IDE
 .idea/
 .vscode/
