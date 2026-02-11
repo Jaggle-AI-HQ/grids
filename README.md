@@ -86,20 +86,35 @@ The SQLite database is persisted in a named volume (`grids-data`).
 
 ```plaintext
 grids/
-├── main.go                     # Entrypoint: routes, CORS, static serving
-├── server/
-│   ├── database/database.go    # SQLite init + auto-migration
-│   ├── handlers/
-│   │   ├── auth.go             # Login, logout, current user
-│   │   └── spreadsheets.go    # Spreadsheet CRUD
-│   ├── middleware/auth.go      # Bearer token auth
-│   └── models/models.go       # User, Spreadsheet, Session models
+├── main.go                          # Entrypoint: wiring, routes, server
+├── internal/
+│   ├── domain/
+│   │   ├── entities.go              # User, Spreadsheet, Session
+│   │   ├── repositories.go         # Repository interfaces
+│   │   └── dto.go                   # Request/response types
+│   ├── service/
+│   │   ├── auth.go                  # Auth business logic
+│   │   └── spreadsheet.go          # Spreadsheet business logic
+│   ├── handler/
+│   │   ├── auth.go                  # HTTP handlers: auth
+│   │   └── spreadsheet.go          # HTTP handlers: spreadsheets
+│   ├── middleware/
+│   │   ├── auth.go                  # Bearer token auth
+│   │   └── cors.go                  # CORS middleware
+│   └── repository/sqlite/
+│       ├── db.go                    # SQLite connection + migrations
+│       ├── models.go                # GORM models + mappers
+│       ├── user_repo.go
+│       ├── session_repo.go
+│       └── spreadsheet_repo.go
 ├── frontend/
 │   ├── src/
-│   │   ├── App.tsx             # Router + protected routes
+│   │   ├── App.tsx                  # Router + root component
+│   │   ├── components/
+│   │   │   └── ProtectedRoute.tsx
 │   │   ├── lib/
-│   │   │   ├── api.ts          # API client
-│   │   │   └── save-manager.ts # Auto-save with dirty detection
+│   │   │   ├── api.ts               # API client
+│   │   │   └── save-manager.ts      # Auto-save with dirty detection
 │   │   └── pages/
 │   │       ├── LoginPage.tsx
 │   │       ├── DashboardPage.tsx
@@ -107,6 +122,8 @@ grids/
 │   └── vite.config.ts
 ├── Dockerfile
 ├── docker-compose.yml
+├── VERSION
+├── CHANGELOG.md
 └── Makefile
 ```
 

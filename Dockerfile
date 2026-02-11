@@ -17,7 +17,7 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY main.go ./
-COPY server/ ./server/
+COPY internal/ ./internal/
 
 COPY VERSION ./
 
