@@ -7,11 +7,12 @@ services:
       - path: .env
         required: false
     ports:
-      - "${PORT:-8080}:8080"
+      - "${EXTERNAL_PORT:-8080}:8080"
     volumes:
       - grids-data:/app/data
     environment:
       - GIN_MODE=${GIN_MODE:-release}
+      - EXTERNAL_PORT=${EXTERNAL_PORT:-3000}
       - PORT=${PORT:-8080}
       - DB_PATH=${DB_PATH:-/app/data/jaggle_grids.db}
       - CORS_ORIGIN=${CORS_ORIGIN:-*}
