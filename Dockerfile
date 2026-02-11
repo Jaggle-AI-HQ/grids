@@ -19,10 +19,13 @@ RUN go mod download
 COPY main.go ./
 COPY server/ ./server/
 
+COPY VERSION ./
+
 # Copy built frontend so it gets embedded at the expected path
 COPY --from=frontend-build /app/frontend/dist ./frontend/dist
 
-RUN CGO_ENABLED=1 go build -o jaggle-grids -ldflags="-s -w" main.go
+RUN CGO_ENABLED=1 go build -o jaggle-grids \
+    -ldflags="-s -w -X main.Version=$(cat VERSION)" main.go
 
 # ── Stage 3: Runtime ──────────────────────────
 FROM alpine:3.21

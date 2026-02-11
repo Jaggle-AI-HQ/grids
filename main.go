@@ -11,6 +11,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Version is set at build time via -ldflags.
+var Version = "dev"
+
 func main() {
 	// Initialize database
 	database.Init()
@@ -42,7 +45,7 @@ func main() {
 
 	// Health check
 	r.GET("/api/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"status": "ok", "service": "Jaggle Grids"})
+		c.JSON(http.StatusOK, gin.H{"status": "ok", "service": "Jaggle Grids", "version": Version})
 	})
 
 	// Auth routes (no auth required)
@@ -77,7 +80,7 @@ func main() {
 		port = "8080"
 	}
 
-	log.Printf("Jaggle Grids server starting on :%s", port)
+	log.Printf("Jaggle Grids %s starting on :%s", Version, port)
 	if err := r.Run(":" + port); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}
