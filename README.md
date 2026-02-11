@@ -1,5 +1,7 @@
 # Jaggle Grids
 
+[![CI](https://github.com/Jaggle-AI-HQ/grids/actions/workflows/ci.yml/badge.svg)](https://github.com/Jaggle-AI-HQ/grids/actions/workflows/ci.yml)
+
 A web-based spreadsheet application powered by [IronCalc](https://www.ironcalc.com/) (WASM). Part of the Jaggle suite of productivity tools.
 
 ## Tech Stack
