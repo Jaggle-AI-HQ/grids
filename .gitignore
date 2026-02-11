@@ -1,0 +1,15 @@
+# Go
+jaggle-grids
+jaggle_grids.db
+*.db-journal
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
