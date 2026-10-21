@@ -9,7 +9,7 @@ on:
 jobs:
   backend:
     name: Backend
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, jaggle-dev]
     steps:
       - uses: actions/checkout@v4
 
@@ -28,7 +28,7 @@ jobs:
 
   frontend:
     name: Frontend
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, jaggle-dev]
     defaults:
       run:
         working-directory: frontend
@@ -52,7 +52,7 @@ jobs:
 
   docker:
     name: Docker Build
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, jaggle-dev]
     needs: [backend, frontend]
     steps:
       - uses: actions/checkout@v4
