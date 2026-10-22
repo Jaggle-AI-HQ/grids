@@ -8,7 +8,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # ── Stage 2: Build Go binary ──────────────────
-FROM golang:1.24-alpine AS backend-build
+FROM golang:1.27.3-alpine AS backend-build
 
 # CGO is required for go-sqlite3
 RUN apk add --no-cache gcc musl-dev
